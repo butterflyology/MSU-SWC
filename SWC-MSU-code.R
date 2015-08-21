@@ -1,5 +1,5 @@
-# Code for SWC at MSU 20-08-2015
-# Day 1
+# Code for SWC at MSU - Chris Hamm
+# Day 1 (20-Aug-2015)
 
 # set the working directory (rstudio allows you to set this with the "Session" tab)
 setwd("~/MSU-SWC")
@@ -178,3 +178,124 @@ head(sampl)
 # lets look at the association between Age and Anuerisms_q1 (note that both of these are continuous variables)
 plot(sampl$Age, sampl$Aneurisms_q4, ylab = "Q4 Aneurisms", xlab = "Age", pch = 19, las = 1)
 # look up the help function page for plot by typing "?plot" in the console to see what each of the arguments does 
+
+# Day 2 (21-Aug-2015)
+setwd("~/MSU-SWC")
+samp <- read.csv("sample.csv", header = TRUE)
+head(samp)
+str(samp)
+
+
+hist(samp$Aneurisms_q1, xlim = c(50, 400), col = "grey")
+hist(samp$Aneurisms_q4, add = TRUE)
+
+# pdf(file = "t-test-demo.pdf", bg = "white")
+plot(samp$Aneurisms_q1, samp$Aneurisms_q4, pch = 19)
+# dev.off()
+
+t.test(samp$Aneurisms_q1, samp$Aneurisms_q4, alternative = "two.sided")
+
+install.packages("dplyr")
+install.packages("devtools")
+library("devtools")
+install_github("rmcelreath/rethinking")
+
+
+install.packages("MEDUSA_0.93-4-25.tar.gz", type = "source", repos = NULL, dependencies = TRUE)
+update.packages()
+
+# using functions to analyze multiple data sets
+analyze <- function(filename){
+  # compute the ave, min, and max for inflammation over time
+  par(mfrow = c(3, 1))
+  dat <- read.csv(file = filename, header = FALSE)
+  avg_day_inflammation <- apply(dat, 2, mean)
+  plot(avg_day_inflammation)
+  max_day_inflammation <- apply(dat, 2, max)
+  plot(max_day_inflammation)
+  min_day_inflammation <- apply(dat, 2, min)
+  plot(min_day_inflammation)
+  par(mfrow = c(1, 1))
+}
+analyze("inflammation-01.csv")
+
+
+best_practice <- c("Let", "the", "computer", "do", "the", "work")
+
+print_words <- function(sentence){
+  print(sentence[1])
+  print(sentence[2])
+  print(sentence[3])
+  print(sentence[4])
+  print(sentence[5])
+  print(sentence[6])
+}
+print_words(best_practice)
+
+print_words <- function(sentence){
+  for(word in sentence){
+    print(word)
+  }
+}
+print_words(best_practice)
+
+for(variable in something){
+  do thing with variable
+}
+
+for(word in best_practice){
+  print(word)
+}  
+
+vowels <- c("a", "e", "i", "o", "u")
+len <- 0
+for(i in vowels){
+  len <- len + 1
+}
+len
+length(vowels)
+
+library("dplyr")
+
+surveys <- read.csv("portal_data_joined.csv", header = TRUE)
+head(surveys)
+str(surveys)
+surveys$plot_id <- as.factor(surveys$plot_id)
+
+# select takes columns
+head(select(surveys, plot_id, species_id, weight))
+# filter takes rows
+filter(surveys, year == 1995)
+
+# what if you want to use rows and columns
+
+# pipes look like %>%
+
+surveys %>% filter(weight < 5) %>% select(species_id, sex, weight)
+
+surveys_sml <- surveys %>% filter(weight >= 5) %>% select(species_id, sex, weight)
+head(surveys_sml)
+
+# generate an object that contains samples before 1985, return sex and weight
+surveys %>% filter(year < 1985) %>% select(species_id, weight)
+
+# mutate - makes new columns based on something done to existing columns
+surveys %>% mutate(weight_kg = weight / 1000) %>% head
+
+surveys %>% mutate(weight_kg = weight / 1000) %>% filter(!is.na(weight)) %>% head
+
+# group_by - for the split-apply-combine paradigm
+surveys %>% group_by(sex) %>% tally()
+
+# mean weight by sex?
+surveys %>% group_by(sex) %>% summarise(mean_weight = mean(weight))
+
+surveys %>% group_by(sex) %>% summarise(mean_weight = mean(weight, na.rm = TRUE))
+
+surveys %>% group_by(sex) %>% summarise(mean_weight = mean(weight, na.rm = TRUE)) %>% filter(!is.na(mean_weight))
+
+surveys %>% group_by(sex, species_id) %>% summarise(mean_weight = mean(weight, na.rm = TRUE)) %>% filter(!is.na(mean_weight))
+
+test1 <- surveys %>% group_by(sex, species_id) %>% summarise(mean_weight = mean(weight, na.rm = TRUE), min_weight = min(weight, na.rm = TRUE)) %>% filter(!is.na(mean_weight))
+
+write.table(test1, file = "Test1.txt", sep = "\t", eol = "\r")
