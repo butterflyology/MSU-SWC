@@ -170,3 +170,11 @@ span <- function(a){
   return(diff)
 }
 span(1:20)
+
+# exploring the plot function a bit more
+sampl <- read.csv("sample.csv", header = TRUE)
+head(sampl)
+
+# lets look at the association between Age and Anuerisms_q1 (note that both of these are continuous variables)
+plot(sampl$Age, sampl$Aneurisms_q4, ylab = "Q4 Aneurisms", xlab = "Age", pch = 19, las = 1)
+# look up the help function page for plot by typing "?plot" in the console to see what each of the arguments does 
