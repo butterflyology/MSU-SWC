@@ -204,6 +204,25 @@ install_github("rmcelreath/rethinking")
 install.packages("MEDUSA_0.93-4-25.tar.gz", type = "source", repos = NULL, dependencies = TRUE)
 update.packages()
 
+
+# When R undergoes a major update, the packages that you have installed will need to be reinstalled to work properly. Reinstalling every package can be tedious. I have written a simple script to help you reinstal all your packages. This script makes a file with all the package names in the old version of R. You then install the new version of R and run the second part of the script. The file "udateR" in this repo contains an independent copy of the script.
+
+#--run in the old version of R
+setwd("~/MSU-SWC")
+packages <- installed.packages()[,"Package"]
+save(packages, file="Rpackages.3.2.2")
+
+#--run in the new version
+setwd("~/MSU-SWC")
+load("Rpackages.3.2.2")
+for (p in setdiff(packages, installed.packages()[,"Package"]))
+install.packages(p)
+
+# To remove all packages except the base
+#remove.packages(packages)
+
+
+
 # using functions to analyze multiple data sets
 analyze <- function(filename){
   # compute the ave, min, and max for inflammation over time
